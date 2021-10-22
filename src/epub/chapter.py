@@ -1,8 +1,36 @@
 
+from typing import List
 from re import sub
+
+from requests import get
 from bs4.element import Tag
 
 from webtoepub.epub.resources import XMLTemplates
+
+
+class EpubImage:
+    
+    def __init__(self, id, path, content_type, content):
+        self._id = id
+        self._path = path
+        self._content_type = content_type
+        self._content = content
+    
+    @property
+    def id(self) -> str:
+        return self._id
+
+    @property
+    def path(self) -> str:
+        return self._path
+
+    @property
+    def content_type(self) -> str:
+        return self._content_type
+
+    @property
+    def content(self) -> bytes:
+        return self._content
 
 class EpubChapter:
     
@@ -25,8 +53,6 @@ class EpubChapter:
         title_tag.string = title
         body.append(title_tag)
         
-        for image_tag in chapter_contents.find_all('img'):
-            image_tag.decompose()
         body.append(chapter_contents)
         
         self._contents = contents
@@ -54,6 +80,28 @@ class EpubChapter:
     @property
     def contents(self) -> str:
         return self._contents.prettify()
+
+    def extract_images(self) -> List[EpubImage]:
+
+        images = []
+        
+        for image_tag in self._contents.find_all('img'):
+
+            response = get(image_tag['src'], stream=True)
+            content_type = response.headers.get('content-type')
+            
+            ext = content_type.split('/')[1]
+            filename = f'Images/{len(images):04}_{EpubChapter.__fix_title(self.title)}.{ext}'
+
+            image_tag['src'] = f'../{filename}'
+
+            
+            image = EpubImage(f'{self._index:04}image_{len(images)}',
+                filename, content_type, response.content)
+
+            images.append(image)
+
+        return images
 
     @staticmethod
     def __fix_title(title: str) -> str:

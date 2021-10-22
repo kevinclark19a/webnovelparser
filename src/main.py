@@ -26,7 +26,8 @@ class WebToEpub:
 
             def fetch_and_add_chapter(idx: int) -> None:
                 web_chapter = novel.get_chapter(idx)
-                epub_chapter = EpubChapter(idx, web_chapter.source, web_chapter.title, web_chapter.contents)
+                epub_chapter = EpubChapter(idx, web_chapter.source,
+                    web_chapter.title, web_chapter.contents)
 
                 with epub_lock:
                     epub.add_chapter(epub_chapter)

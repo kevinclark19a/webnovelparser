@@ -159,6 +159,13 @@ class EpubFile:
         self._zipfile.__exit__(exception_type,exception_val, tb)
 
     def add_chapter(self, chapter: EpubChapter) -> None:
+        # Order matters here, extracting the images changes chapter.contents.
+        images = chapter.extract_images()
+        for image in images:
+            self._zipfile.writestr(f'OEBPS/{image.path}', image.content)
+            self._content_opf.add_manifest_item(image.id, href=image.path,
+                id=image.id, media_type=image.content_type)
+
         self._zipfile.writestr(chapter.filename, chapter.contents)
 
         chapter_relpath = relpath(chapter.filename, start='OEBPS')
