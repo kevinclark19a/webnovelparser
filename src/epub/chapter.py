@@ -25,6 +25,8 @@ class EpubChapter:
         title_tag.string = title
         body.append(title_tag)
         
+        for image_tag in chapter_contents.find_all('img'):
+            image_tag.decompose()
         body.append(chapter_contents)
         
         self._contents = contents
