@@ -5,7 +5,7 @@ from requests import get
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
-from webtoepub.metadata import NovelMetadata
+from webtoepub.epub.metadata import NovelMetadata
 
 
 class _RoyalRoadStoryPage:

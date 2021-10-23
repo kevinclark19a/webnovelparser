@@ -5,9 +5,9 @@ from os.path import relpath
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
-from webtoepub.epub.chapter import EpubChapter
-from webtoepub.epub.resources import XMLTemplates
-from webtoepub.metadata import NovelMetadata
+from webtoepub.epub.file.resource import EpubChapter
+from webtoepub.epub.file.template import XMLTemplates
+from webtoepub.epub.metadata import NovelMetadata
 
 class _TableOfContents:
 

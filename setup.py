@@ -19,7 +19,7 @@ if __name__ == '__main__':
         install_requires=['requests', 'bs4', 'setuptools'],
 
         entry_points= {
-            'console_scripts': ['webtoepub=webtoepub.main:run']
+            'console_scripts': ['webtoepub=webtoepub.cmdline.main:run']
         },
 
         include_package_data=True,

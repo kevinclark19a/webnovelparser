@@ -5,7 +5,7 @@ from re import sub
 from requests import get
 from bs4.element import Tag
 
-from webtoepub.epub.resources import XMLTemplates
+from webtoepub.epub.file.template import XMLTemplates
 
 
 class EpubImage:

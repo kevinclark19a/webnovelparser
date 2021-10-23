@@ -1,19 +1,38 @@
 
-from sys import argv
 from concurrent.futures import ThreadPoolExecutor
 from threading import Lock
 
-from webtoepub.arguments import WebToEpubArguments
-from webtoepub.web.novel import RoyalRoadWebNovel
-from webtoepub.epub.chapter import EpubChapter
-from webtoepub.epub.writer import EpubFile
-
-def run():
-    opts = WebToEpubArguments.from_argv(argv[1:])
-    return WebToEpub(opts).run()
+from webtoepub.epub.file.writer import EpubFile
+from webtoepub.epub.file.resource import EpubChapter
+from webtoepub.epub.web.novel import RoyalRoadWebNovel
 
 
-class WebToEpub:
+
+class EpubBuilderArguments:
+    
+    @property
+    def starting_chapter(self) -> int:
+        return self._starting_chapter
+    
+    @property
+    def ending_chapter(self) -> int:
+        return self._ending_chapter
+    
+    @property
+    def story_id(self) -> int:
+        return self._story_id
+    
+    @property
+    def filename(self) -> str:
+        return self._filename
+
+    def __init__(self, starting_chapter: int, ending_chapter: int, story_id: int, filename: str) -> None:
+        self._starting_chapter = starting_chapter
+        self._ending_chapter = ending_chapter
+        self._story_id = story_id
+        self._filename = filename
+
+class EpubBuilder:
 
     def __init__(self, options):
         self._options = options
