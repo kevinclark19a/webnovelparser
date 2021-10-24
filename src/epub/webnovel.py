@@ -1,9 +1,6 @@
 
-from typing import Iterator
-
 from requests import get
 from bs4 import BeautifulSoup
-from bs4.element import Tag
 
 from webtoepub.epub.resources import NovelMetadata, NovelChapter
 

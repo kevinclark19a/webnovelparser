@@ -1,12 +1,12 @@
 
 from zipfile import ZipFile
-from os.path import relpath
 
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
-from webtoepub.epub.templates import XMLTemplates
 from webtoepub.epub.resources import NovelMetadata, NovelChapter
+from webtoepub.epub.templates import XMLTemplates
+
 
 class _TableOfContents:
 
