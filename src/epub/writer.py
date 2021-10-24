@@ -5,9 +5,8 @@ from os.path import relpath
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
-from webtoepub.epub.file.resource import EpubChapter
-from webtoepub.epub.file.template import XMLTemplates
-from webtoepub.epub.metadata import NovelMetadata
+from webtoepub.epub.templates import XMLTemplates
+from webtoepub.epub.resources import NovelMetadata, NovelChapter
 
 class _TableOfContents:
 
@@ -158,21 +157,19 @@ class EpubFile:
         self._zipfile.writestr('OEBPS/toc.ncx', str(self._toc))
         self._zipfile.__exit__(exception_type,exception_val, tb)
 
-    def add_chapter(self, chapter: EpubChapter) -> None:
+
+    def add_chapter(self, chapter: NovelChapter) -> None:
         # Order matters here, extracting the images changes chapter.contents.
-        images = chapter.extract_images()
-        for image in images:
+        for image in chapter.extract_images():
             self._zipfile.writestr(f'OEBPS/{image.path}', image.content)
             self._content_opf.add_manifest_item(image.id, href=image.path,
                 id=image.id, media_type=image.content_type)
-
-        self._zipfile.writestr(chapter.filename, chapter.contents)
-
-        chapter_relpath = relpath(chapter.filename, start='OEBPS')
         
-        self._content_opf.add_manifest_item(chapter.index, href=chapter_relpath,
+        self._zipfile.writestr(f'OEBPS/{chapter.path}', chapter.contents.prettify())
+        
+        self._content_opf.add_manifest_item(chapter.index, href=chapter.path,
             id=chapter.id, media_type='application/xhtml+xml', add_to_spine=True)
-        self._toc.add_entry(chapter.index, chapter.title, chapter_relpath)
+        self._toc.add_entry(chapter.index, chapter.title, chapter.path)
 
     def add_cover(self, img_content: bytes) -> None:
         if not img_content:

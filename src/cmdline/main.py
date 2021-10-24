@@ -7,7 +7,12 @@ from webtoepub.epub.builder import EpubBuilderArguments, EpubBuilder
 
 def run():
     opts = __from_argv(argv[1:])
-    return EpubBuilder(opts).run()
+
+    try:
+        EpubBuilder(opts).run()
+        return 0
+    except Exception:
+        return -1
 
 
 def __from_argv(argslist: List[str]) -> EpubBuilderArguments:

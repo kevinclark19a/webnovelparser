@@ -5,7 +5,7 @@ from requests import get
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
-from webtoepub.epub.metadata import NovelMetadata
+from webtoepub.epub.resources import NovelMetadata, NovelChapter
 
 
 class _RoyalRoadStoryPage:
@@ -26,13 +26,18 @@ class _RoyalRoadStoryPage:
         return html_obj.find(class_='cover-col').find('img')['src']
 
     @staticmethod
-    def __extract_chapter_data(html_obj: BeautifulSoup) -> str:
+    def __extract_chapter_data(html_obj: BeautifulSoup):
         chapter_table = html_obj.find(id="chapters").find('tbody')
 
-        return [
-            (tr.find('td', href=lambda _: True).text.strip(), tr['data-url'] )
-            for tr in chapter_table.find_all('tr')
-        ]
+        chapter_data = []
+        for tr in chapter_table.find_all('tr'):
+            chapter_link_tag = tr.find('a', href=lambda _: True)
+
+            title_text = chapter_link_tag.text.strip()
+            href = chapter_link_tag['href']
+            chapter_data.append( (title_text, href) )
+
+        return chapter_data
 
     def __init__(self, source: str, html_text: str) -> None:
         html_obj = BeautifulSoup(html_text, 'html.parser')
@@ -44,36 +49,12 @@ class _RoyalRoadStoryPage:
         self._cover_image_url = _RoyalRoadStoryPage.__extract_cover_image_url(html_obj)
         self.chapter_data = _RoyalRoadStoryPage.__extract_chapter_data(html_obj)
 
-    def fetch_cover_image(self) -> bytes:
+    def fetch_cover_image(self) -> bytes: # TODO: Can this use NovelImage?
         response = get(self._cover_image_url, stream=True)
+        if not response.ok:
+            return None
         return response.content
 
-class RoyalRoadChapter:
-
-    @staticmethod
-    def __extract_contents(html_obj: BeautifulSoup) -> Tag:
-        return html_obj.find(class_="chapter-inner")
-        
-    
-    def __init__(self, source: str, title: str, html_text: str) -> None:
-
-        html_obj = BeautifulSoup(html_text, 'html.parser')
-        self._contents = RoyalRoadChapter.__extract_contents(html_obj)
-
-        self._source = source
-        self._title = title
-
-    @property
-    def source(self) -> str:
-        return self._source
-    
-    @property
-    def title(self) -> str:
-        return self._title
-    
-    @property
-    def contents(self) -> str:
-        return self._contents
 
 class RoyalRoadWebNovel:
     __BASE_URL = 'https://www.royalroad.com'
@@ -81,16 +62,15 @@ class RoyalRoadWebNovel:
     def __init__(self, story_id) -> None:
         self._story_page = RoyalRoadWebNovel.__fetch_story_page(story_id)
 
-
     @property
     def metadata(self) -> NovelMetadata:
         return self._story_page.metadata
 
-    def get_chapter(self, index: int) -> Iterator[RoyalRoadChapter]:
+    def get_chapter(self, index: int) -> NovelChapter:
 
         try:
-            title, url = self._story_page.chapter_data[index]
-            return RoyalRoadWebNovel.__fetch_chapter(title, url)
+            title, href = self._story_page.chapter_data[index]
+            return RoyalRoadWebNovel.__fetch_chapter(index, title, href)
         except IndexError:
             raise ValueError(f"Web novel doesn't have a chapter number {index}.")
 
@@ -99,11 +79,16 @@ class RoyalRoadWebNovel:
 
     @staticmethod
     def __fetch_story_page(story_id: int) -> _RoyalRoadStoryPage:
-        print(f'{RoyalRoadWebNovel.__BASE_URL}/fiction/{story_id}')
         response = get(f'{RoyalRoadWebNovel.__BASE_URL}/fiction/{story_id}')
+        response.raise_for_status()
         return _RoyalRoadStoryPage(response.url, response.text)
 
     @staticmethod
-    def __fetch_chapter(title: str, url_stub: str) -> RoyalRoadChapter:
-        response = get(f'{RoyalRoadWebNovel.__BASE_URL}{url_stub}')
-        return RoyalRoadChapter(response.url, title, response.text)
+    def __fetch_chapter(index: int, title: str, href: str) -> NovelChapter:
+        response = get(f'{RoyalRoadWebNovel.__BASE_URL}{href}')
+        response.raise_for_status()
+
+        html_obj = BeautifulSoup(response.text, 'html.parser')
+        contents = html_obj.find(class_="chapter-inner")
+        
+        return NovelChapter(index, response.url, title, contents)

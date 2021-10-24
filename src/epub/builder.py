@@ -2,9 +2,8 @@
 from concurrent.futures import ThreadPoolExecutor
 from threading import Lock
 
-from webtoepub.epub.file.writer import EpubFile
-from webtoepub.epub.file.resource import EpubChapter
-from webtoepub.epub.web.novel import RoyalRoadWebNovel
+from webtoepub.epub.writer import EpubFile
+from webtoepub.epub.webnovel import RoyalRoadWebNovel
 
 
 
@@ -37,19 +36,25 @@ class EpubBuilder:
     def __init__(self, options):
         self._options = options
     
-    def run(self):
-        novel = RoyalRoadWebNovel(self._options.story_id)
+    def run(self) -> None:
+        try:
+            novel = RoyalRoadWebNovel(self._options.story_id)
+        except Exception as e:
+            print(f'Failed to fetch web novel, exception was: {e}')
+            raise
 
         with EpubFile(novel.metadata, self._options.filename) as epub:
             epub_lock = Lock()
 
             def fetch_and_add_chapter(idx: int) -> None:
-                web_chapter = novel.get_chapter(idx)
-                epub_chapter = EpubChapter(idx, web_chapter.source,
-                    web_chapter.title, web_chapter.contents)
 
-                with epub_lock:
-                    epub.add_chapter(epub_chapter)
+                try:
+                    chapter = novel.get_chapter(idx)
+                except Exception as e:
+                    print(f'Failed to fetch chapter#{idx}, skipping. Exception was:\n{e}')
+                else:
+                    with epub_lock:
+                        epub.add_chapter(chapter)
 
             epub.add_cover(novel.get_cover_image())
 
