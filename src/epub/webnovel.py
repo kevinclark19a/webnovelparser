@@ -41,10 +41,11 @@ class _RoyalRoadStoryPage:
 
         author = _RoyalRoadStoryPage.__extract_author(html_obj)
         title = _RoyalRoadStoryPage.__extract_title(html_obj)
-        self.metadata = NovelMetadata(source, title, author)
+        self.chapter_data = _RoyalRoadStoryPage.__extract_chapter_data(html_obj)
+
+        self.metadata = NovelMetadata(source, title, author, len(self.chapter_data))
 
         self._cover_image_url = _RoyalRoadStoryPage.__extract_cover_image_url(html_obj)
-        self.chapter_data = _RoyalRoadStoryPage.__extract_chapter_data(html_obj)
 
     def fetch_cover_image(self) -> bytes: # TODO: Can this use NovelImage?
         response = get(self._cover_image_url, stream=True)

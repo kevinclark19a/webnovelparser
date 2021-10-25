@@ -120,10 +120,11 @@ class NovelChapter:
 
 class NovelMetadata:
 
-    def __init__(self, source: str, title: str, author: str):
+    def __init__(self, source: str, title: str, author: str, num_chapters: int):
         self._source = source
         self._title = title
         self._author = author
+        self._num_chapters = num_chapters
 
     @property
     def source(self) -> str:
@@ -136,3 +137,7 @@ class NovelMetadata:
     @property
     def title(self) -> str:
         return self._title
+    
+    @property
+    def num_chapters(self) -> int:
+        return self._num_chapters

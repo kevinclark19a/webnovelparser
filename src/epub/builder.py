@@ -43,6 +43,19 @@ class EpubBuilder:
             print(f'Failed to fetch web novel, exception was: {e}')
             raise
 
+        def rectify_index(chapter_number):
+            if chapter_number < 0:
+                return novel.metadata.num_chapters + chapter_number
+            return chapter_number - 1
+        
+        rectified_start = rectify_index(self._options.starting_chapter)
+        rectified_end = rectify_index(self._options.ending_chapter)
+
+        if rectified_start > rectified_end:
+            raise ValueError(f'Chapter range ({rectified_start},{rectified_end}) doesn\'t make sense!')
+        if rectified_end > novel.metadata.num_chapters:
+            raise ValueError(f'Chapter range ({rectified_start},{rectified_end}) exceeds max chapter: {novel.metadata.num_chapters}')
+
         with EpubFile(novel.metadata, self._options.filename) as epub:
             epub_lock = Lock()
 
@@ -59,5 +72,5 @@ class EpubBuilder:
             epub.add_cover(novel.get_cover_image())
 
             with ThreadPoolExecutor() as executor:
-                for idx in range(self._options.starting_chapter - 1, self._options.ending_chapter):
+                for idx in range(rectified_start, rectified_end + 1):
                     executor.submit(fetch_and_add_chapter, idx)

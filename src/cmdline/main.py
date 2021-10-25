@@ -11,32 +11,22 @@ def run():
     try:
         EpubBuilder(opts).run()
         return 0
-    except Exception:
+    except Exception as e:
+        print(e)
         return -1
 
 
 def __from_argv(argslist: List[str]) -> EpubBuilderArguments:
     parser = ArgumentParser()
-    
-    def pos(val):
-        converted = int(val)
-        
-        if converted < 1:
-            raise ValueError(f"Value must be greater than zero, got {converted}")
-        
-        return converted
 
-    parser.add_argument('-s', '--starting-chapter', type=pos,
+    parser.add_argument('-s', '--starting-chapter', type=int,
         nargs='?', dest="STARTING_CHAPTER", default=1)
-    parser.add_argument('-e', '--ending-chapter', type=pos,
-        nargs='?', dest="ENDING_CHAPTER", default=1)
+    parser.add_argument('-e', '--ending-chapter', type=int,
+        nargs='?', dest="ENDING_CHAPTER", default=-1)
     parser.add_argument('STORY_ID', type=int)
     parser.add_argument('FILENAME', type=str)
 
     args = parser.parse_args(argslist)
-
-    if args.STARTING_CHAPTER > args.ENDING_CHAPTER:
-        raise ValueError("Ending chapter number must be past starting chapter number.")
     
     return EpubBuilderArguments(
         args.STARTING_CHAPTER,
