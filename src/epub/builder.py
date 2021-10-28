@@ -18,6 +18,10 @@ class EpubBuilderArguments:
         return self._ending_chapter
     
     @property
+    def name_override(self) -> str:
+        return self._name_override
+    
+    @property
     def story_id(self) -> int:
         return self._story_id
     
@@ -25,9 +29,10 @@ class EpubBuilderArguments:
     def filename(self) -> str:
         return self._filename
 
-    def __init__(self, starting_chapter: int, ending_chapter: int, story_id: int, filename: str) -> None:
+    def __init__(self, starting_chapter: int, ending_chapter: int, name_override: str, story_id: int, filename: str) -> None:
         self._starting_chapter = starting_chapter
         self._ending_chapter = ending_chapter
+        self._name_override = name_override
         self._story_id = story_id
         self._filename = filename
 
@@ -38,7 +43,7 @@ class EpubBuilder:
     
     def run(self) -> None:
         try:
-            novel = RoyalRoadWebNovel(self._options.story_id)
+            novel = RoyalRoadWebNovel(self._options.story_id, self._options.name_override)
         except Exception as e:
             print(f'Failed to fetch web novel, exception was: {e}')
             raise

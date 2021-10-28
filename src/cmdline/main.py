@@ -23,6 +23,8 @@ def __from_argv(argslist: List[str]) -> EpubBuilderArguments:
         nargs='?', dest="STARTING_CHAPTER", default=1)
     parser.add_argument('-e', '--ending-chapter', type=int,
         nargs='?', dest="ENDING_CHAPTER", default=-1)
+    parser.add_argument('--story-name-override', type=str,
+        nargs='?', dest="STORY_NAME_OVERRIDE")
     parser.add_argument('STORY_ID', type=int)
     parser.add_argument('FILENAME', type=str)
 
@@ -31,6 +33,7 @@ def __from_argv(argslist: List[str]) -> EpubBuilderArguments:
     return EpubBuilderArguments(
         args.STARTING_CHAPTER,
         args.ENDING_CHAPTER,
+        args.STORY_NAME_OVERRIDE,
         args.STORY_ID,
         args.FILENAME
     )

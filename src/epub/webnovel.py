@@ -57,11 +57,14 @@ class _RoyalRoadStoryPage:
 class RoyalRoadWebNovel:
     __BASE_URL = 'https://www.royalroad.com'
 
-    def __init__(self, story_id) -> None:
+    def __init__(self, story_id, name_override) -> None:
         self._story_page = RoyalRoadWebNovel.__fetch_story_page(story_id)
+        self._name_override = name_override
 
     @property
     def metadata(self) -> NovelMetadata:
+        if self._name_override not in ("", None):
+            return self._story_page.metadata.with_value(title=self._name_override)
         return self._story_page.metadata
 
     def get_chapter(self, index: int) -> NovelChapter:
