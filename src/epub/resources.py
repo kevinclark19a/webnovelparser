@@ -128,14 +128,10 @@ class NovelMetadata:
 
     def with_value(self, **kwargs: dict):
 
-        source = kwargs.pop('source') if 'source' in kwargs \
-            else self._source
-        title = kwargs.pop('title') if 'title' in kwargs \
-            else self._title
-        author = kwargs.pop('author') if 'author' in kwargs \
-            else self._author
-        num_chapters = kwargs.pop('num_chapters') if 'num_chapters' in kwargs \
-            else self._num_chapters
+        source = kwargs.pop('source', self.source)
+        title = kwargs.pop('title', self.title)
+        author = kwargs.pop('author', self.author)
+        num_chapters = kwargs.pop('num_chapters', self.num_chapters)
 
         if kwargs not in ({}, None):
             raise ValueError(f'NovelMetadata does not have the following fields: {kwargs.keys()}')

@@ -57,7 +57,7 @@ class _RoyalRoadStoryPage:
 class RoyalRoadWebNovel:
     __BASE_URL = 'https://www.royalroad.com'
 
-    def __init__(self, story_id, name_override) -> None:
+    def __init__(self, story_id, name_override=None) -> None:
         self._story_page = RoyalRoadWebNovel.__fetch_story_page(story_id)
         self._name_override = name_override
 
@@ -72,6 +72,14 @@ class RoyalRoadWebNovel:
         try:
             title, href = self._story_page.chapter_data[index]
             return RoyalRoadWebNovel.__fetch_chapter(index, title, href)
+        except IndexError:
+            raise ValueError(f"Web novel doesn't have a chapter number {index}.")
+
+    def peek_chapter_title(self, index) -> str:
+
+        try:
+            title, _ = self._story_page.chapter_data[index]
+            return title
         except IndexError:
             raise ValueError(f"Web novel doesn't have a chapter number {index}.")
 

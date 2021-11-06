@@ -41,7 +41,7 @@ class EpubBuilder:
     def __init__(self, options):
         self._options = options
     
-    def run(self) -> None:
+    def run(self) -> int:
         try:
             novel = RoyalRoadWebNovel(self._options.story_id, self._options.name_override)
         except Exception as e:
@@ -79,3 +79,5 @@ class EpubBuilder:
             with ThreadPoolExecutor() as executor:
                 for idx in range(rectified_start, rectified_end + 1):
                     executor.submit(fetch_and_add_chapter, idx)
+            
+        return rectified_end + 1 # Convert from 0-based to 1-based.
