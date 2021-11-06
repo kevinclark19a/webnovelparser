@@ -28,7 +28,7 @@ def __get_chapter_bounds(starting: Optional[int], ending: Optional[int],
         return starting, last_update
 
     if ending is not None: # => starting is None
-        if ending > 0: # negative index a la python lists
+        if ending < 0: # negative index a la python lists
             ending += (last_update + 1)
 
         if last_read > ending:
