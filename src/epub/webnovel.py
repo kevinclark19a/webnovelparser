@@ -67,6 +67,9 @@ class RoyalRoadWebNovel:
             return self._story_page.metadata.with_value(title=self._name_override)
         return self._story_page.metadata
 
+    def set_name_override(self, new_name) -> None:
+        self._name_override = new_name
+
     def get_chapter(self, index: int) -> NovelChapter:
 
         try:

@@ -2,6 +2,7 @@
 from json import load, dump
 from json.decoder import JSONDecodeError
 from io import StringIO, open
+from typing import List
 
 class StoryEntry:
 
@@ -54,11 +55,10 @@ class Config:
             self._repr = Config.__build_new_config_repr()
         except (JSONDecodeError, ValueError):
             self._repr = Config.__build_new_config_repr()
-    
-    def show_stories(self) -> None:
-        self._repr['stories'].sort(key=lambda entry: entry.title)
-        for story in self._repr['stories']:
-            print(f'{story.title}<{story.id}>: last_read={story.last_read}')
+
+    @property
+    def stories(self) -> List[StoryEntry]:
+        return self._repr['stories'][:]
 
     def add_story(self, story: StoryEntry) -> None:
         # Ensure uniqueness on id.
