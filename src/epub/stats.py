@@ -36,7 +36,10 @@ class EpubViewer:
                 with write_lock:
                     self._novels.append({
                         'title': novel.metadata.title,
-                        'latest_chapter': latest_chapter_title
+                        'latest_chapter': {
+                            'title': latest_chapter_title,
+                            'index': novel.metadata.num_chapters
+                        }
                     })
         
         with ThreadPoolExecutor() as executor:
@@ -50,5 +53,5 @@ class EpubViewer:
     def show(self):
         for novel in self._novels:
             print(f'{novel["title"]}:')
-            print(f'\tLatest Chapter: "{novel["latest_chapter"]}"')
+            print(f'\tLatest Chapter<{novel["latest_chapter"]["index"]}>: "{novel["latest_chapter"]["title"]}"')
     

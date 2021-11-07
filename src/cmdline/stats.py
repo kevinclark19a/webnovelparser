@@ -15,7 +15,7 @@ def command_parser(config: Config, parser_factory: Callable[[], ArgumentParser])
             [ entry.id for entry in args_namespace.STORY_ENTRIES ]
         )
 
-        EpubViewer(args).run()
+        EpubViewer(args).show()
     
     parser = parser_factory()
     parser.add_argument('STORY_ENTRIES', metavar='STORY_IDS',
