@@ -37,6 +37,9 @@ class StoryEntry:
 
         return StoryEntry(id, title, last_read)
     
+    def __str__(self) -> str:
+        return f'{self.title}<{self.id}>: last_read={self.last_read}'
+    
     def __init__(self, id: int, title: str, last_read: int):
         self._id = id
         self._title = title

@@ -14,6 +14,7 @@ def command_parser(config: Config, parser_factory: Callable[[], ArgumentParser])
     subparser_factory = parser.add_subparsers()
 
     __list_parser(config, subparser_factory.add_parser)
+    __show_parser(config, subparser_factory.add_parser)
     __add_parser(config, subparser_factory.add_parser)
     __remove_parser(config, subparser_factory.add_parser)
 
@@ -25,10 +26,16 @@ def __list_parser(config: Config, parser_factory: Callable[[str], ArgumentParser
         stories.sort(key=lambda entry: entry.title)
 
         for story in stories:
-            print(f'{story.title}<{story.id}>: last_read={story.last_read}')
+            print(story)
 
     parser = parser_factory('list')
     parser.set_defaults(run=action)
+
+def __show_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]):
+    parser = parser_factory('show')
+    parser.add_argument('STORY_ENTRY', metavar='STORY_ID',
+        type=story_entry_factory(config))
+    parser.set_defaults(run=lambda args: print(args.STORY_ENTRY))
 
 def __add_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]):
     

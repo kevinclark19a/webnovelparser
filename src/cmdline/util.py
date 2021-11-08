@@ -2,6 +2,7 @@
 from typing import Callable
 
 from webtoepub.cmdline.conf import Config, StoryEntry
+from webtoepub.epub.webnovel import RoyalRoadWebNovel
 
 
 
@@ -25,3 +26,18 @@ def story_entry_factory(config: Config) -> Callable[[str], StoryEntry]:
         raise ValueError(f'Story "{identifier}" is not tracked, so a story_id must be provided.')
 
     return story_entry
+
+def show_updates(novel: RoyalRoadWebNovel, from_chapter: int) -> bool:
+    if from_chapter < 0:
+        from_chapter += novel.metadata.num_chapters
+
+    print(f'Fetching chapters for "{novel.metadata.title}"...')
+
+    if novel.metadata.num_chapters <= from_chapter:
+        print('\tNo chapters found.')
+        return False
+    
+    for idx in range(from_chapter, novel.metadata.num_chapters):
+        print(f'\tChapter#<{idx}>: "{novel.peek_chapter_title(idx)}"')
+    
+    return True

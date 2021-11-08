@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from typing import Callable, Optional, Tuple
 
 from webtoepub.cmdline.conf import Config, StoryEntry
-from webtoepub.cmdline.util import story_entry_factory
+from webtoepub.cmdline.util import story_entry_factory, show_updates
 from webtoepub.epub.builder import EpubBuilder, EpubBuilderArguments
 from webtoepub.epub.webnovel import RoyalRoadWebNovel
 
@@ -84,14 +84,8 @@ def __one_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]
 
 def __show_update_and_get_confirmation(novel: RoyalRoadWebNovel, last_read: int) -> bool:
     
-    print(f'Fetching updates to "{novel.metadata.title}"...')
-
-    if novel.metadata.num_chapters <= last_read:
-        print('\tNo updates found.')
+    if not show_updates(novel, last_read):
         return False
-    
-    for idx in range(last_read, novel.metadata.num_chapters):
-        print(f'\tFound new chapter: "{novel.peek_chapter_title(idx)}"')
 
     try:
         confirmation = input('Continue with fetch? (Y/n) ')
@@ -152,7 +146,6 @@ def __all_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]
                 return
 
             __retrieve_and_set_name_override(novel)
-
 
             EpubBuilder(EpubBuilderArguments(
                 story_entry.last_read,
