@@ -38,7 +38,7 @@ def __get_chapter_bounds(starting: Optional[int], ending: Optional[int],
         return last_read + 1, ending
     
     # => (starting, ending) is (None, None)
-    return last_read, last_update
+    return last_read + 1, last_update
     
 
 def __one_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]):
@@ -82,9 +82,9 @@ def __one_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]
 
     parser.set_defaults(run=action)
 
-def __show_update_and_get_confirmation(novel: RoyalRoadWebNovel, last_read: int) -> bool:
+def __show_update_and_get_confirmation(novel: RoyalRoadWebNovel, from_chapter: int) -> bool:
     
-    if not show_updates(novel, last_read):
+    if not show_updates(novel, from_chapter):
         return False
 
     try:
@@ -137,8 +137,10 @@ def __all_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]
             except Exception as e:
                 print(f'Failed to fetch web novel, exception was: {e}')
                 return
+
+            from_chapter = story_entry.last_read + 1
             
-            if not __show_update_and_get_confirmation(novel, story_entry.last_read):
+            if not __show_update_and_get_confirmation(novel, from_chapter):
                 return
             
             filename = __retrieve_filename()
@@ -148,7 +150,7 @@ def __all_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]
             __retrieve_and_set_name_override(novel)
 
             EpubBuilder(EpubBuilderArguments(
-                story_entry.last_read,
+                from_chapter,
                 novel.metadata.num_chapters,
                 filename
             ), novel).run()
