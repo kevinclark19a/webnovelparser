@@ -84,7 +84,7 @@ def __one_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]
 
 def __show_update_and_get_confirmation(novel: RoyalRoadWebNovel, from_chapter: int) -> bool:
     
-    if not show_updates(novel, from_chapter):
+    if not show_updates(novel, from_chapter, -1):
         return False
 
     try:
