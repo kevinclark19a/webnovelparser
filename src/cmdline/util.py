@@ -1,5 +1,5 @@
 
-from typing import Callable
+from typing import Callable, Optional, Tuple
 
 from webtoepub.cmdline.conf import Config, StoryEntry
 from webtoepub.epub.webnovel import RoyalRoadWebNovel
@@ -34,7 +34,10 @@ def story_entry_factory(config: Config) -> Callable[[str], StoryEntry]:
 
     return story_entry
 
-def show_updates(novel: RoyalRoadWebNovel, from_chapter: int, to_chapter: int) -> bool:
+def show_updates(novel: RoyalRoadWebNovel,
+    from_chapter: int, to_chapter: int,
+    flag_entries: Tuple[int]=()) -> bool:
+    
     if from_chapter < 0:
         from_chapter += novel.metadata.num_chapters
     if to_chapter < 0:
@@ -47,6 +50,11 @@ def show_updates(novel: RoyalRoadWebNovel, from_chapter: int, to_chapter: int) -
         return False
     
     for idx in range(from_chapter, to_chapter + 1):
-        print(f'\tChapter#<{idx + 1}>: "{novel.peek_chapter_title(idx)}"')
+        output = f'Chapter#<{idx + 1}>: "{novel.peek_chapter_title(idx)}"'
+
+        if idx in flag_entries:
+            print(f'[+]\t{output}')
+        else:
+            print(f'\t{output}')
     
     return True

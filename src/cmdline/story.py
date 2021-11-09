@@ -4,7 +4,7 @@ from typing import Callable
 
 
 from webtoepub.cmdline.conf import Config, StoryEntry
-from webtoepub.cmdline.util import story_entry_factory
+from webtoepub.cmdline.util import story_entry_factory, show_updates
 from webtoepub.epub.webnovel import RoyalRoadWebNovel
 
 
@@ -32,10 +32,30 @@ def __list_parser(config: Config, parser_factory: Callable[[str], ArgumentParser
     parser.set_defaults(run=action)
 
 def __show_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]):
+
+    def action(args_namespace):
+        print(args_namespace.STORY_ENTRY)
+        
+        try:
+            novel = RoyalRoadWebNovel(args_namespace.STORY_ENTRY.id)
+        except Exception as e:
+            print(f'Failed to fetch web novel, exception was: {e}')
+            return
+        
+        show_updates(
+            novel,
+            args_namespace.STARTING_CHAPTER, args_namespace.ENDING_CHAPTER,
+            flag_entries=(args_namespace.STORY_ENTRY.last_read,)
+        )
+
     parser = parser_factory('show')
+    parser.add_argument('-s', '--starting-chapter', type=int,
+        nargs='?', dest="STARTING_CHAPTER", default=-10)
+    parser.add_argument('-e', '--ending-chapter', type=int,
+        nargs='?', dest="ENDING_CHAPTER", default=-1)
     parser.add_argument('STORY_ENTRY', metavar='STORY_ID',
         type=story_entry_factory(config))
-    parser.set_defaults(run=lambda args: print(args.STORY_ENTRY))
+    parser.set_defaults(run=action)
 
 def __add_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]):
     
