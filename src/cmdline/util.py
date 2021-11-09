@@ -1,9 +1,8 @@
 
-from typing import Callable, Optional, Tuple
+from typing import Callable, Tuple
 
 from webtoepub.cmdline.conf import Config, StoryEntry
 from webtoepub.epub.webnovel import RoyalRoadWebNovel
-
 
 
 def story_entry_factory(config: Config) -> Callable[[str], StoryEntry]:

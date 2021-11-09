@@ -2,7 +2,6 @@
 from argparse import ArgumentParser
 from typing import Callable
 
-
 from webtoepub.cmdline.conf import Config, StoryEntry
 from webtoepub.cmdline.util import story_entry_factory, show_updates
 from webtoepub.epub.webnovel import RoyalRoadWebNovel

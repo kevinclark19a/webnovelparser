@@ -1,7 +1,6 @@
 
 from argparse import ArgumentParser
 from os.path import expanduser
-from typing import Callable
 
 from webtoepub.cmdline.conf import Config
 from webtoepub.cmdline.fetch import command_parser as fetch_command_parser
