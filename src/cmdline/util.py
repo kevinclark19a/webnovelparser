@@ -10,18 +10,25 @@ def story_entry_factory(config: Config) -> Callable[[str], StoryEntry]:
     
     def story_entry(identifier: str) -> StoryEntry:
 
-        id = title = None
+        id = handle = title = None
         try:
             id = int(identifier)
         except ValueError:
-            title = identifier
+            title = handle = identifier
         
-        story = config.fetch_story(id=id, title=title)
-
+        # No way to tell the two strings apart, try to treat identifier
+        # as a handle first. 
+        story = config.fetch_story(id=id, handle=handle)
         if story is not None:
             return story
+
+        # Follow up with trying the identifier as a title.
+        story = config.fetch_story(id=id, title=title)
+        if story is not None:
+            return story
+        
         if id is not None:
-            return StoryEntry(id, "", 0)
+            return StoryEntry(id, "", "", 0)
         
         raise ValueError(f'Story "{identifier}" is not tracked, so a story_id must be provided.')
 

@@ -11,6 +11,10 @@ class StoryEntry:
         return self._id
 
     @property
+    def handle(self) -> str:
+        return self._handle
+
+    @property
     def title(self) -> str:
         return self._title
 
@@ -22,6 +26,7 @@ class StoryEntry:
         return {
             'is_story_entry': True,
             'id': self.id,
+            'handle': self.handle,
             'title': self.title,
             'last_read': self.last_read,
         }
@@ -29,19 +34,21 @@ class StoryEntry:
     def with_value(self, **kwargs: dict):
 
         id = kwargs.pop('id', self.id)
+        handle = kwargs.pop('handle', self.handle)
         title = kwargs.pop('title', self.title)
         last_read = kwargs.pop('last_read', self.last_read)
 
         if kwargs not in ({}, None):
             raise ValueError(f'StoryEntry does not have the following fields: {kwargs.keys()}')
 
-        return StoryEntry(id, title, last_read)
+        return StoryEntry(id, handle, title, last_read)
     
     def __str__(self) -> str:
-        return f'{self.title}<{self.id}>: last_read={self.last_read}'
+        return f'{self.title}<{self.handle}>: last_read={self.last_read}'
     
-    def __init__(self, id: int, title: str, last_read: int):
+    def __init__(self, id: int, handle: str, title: str, last_read: int):
         self._id = id
+        self._handle = handle
         self._title = title
         self._last_read = last_read
 
@@ -78,12 +85,10 @@ class Config:
             self._repr['stories'].remove(entry)
     
     def fetch_story(self, **kwargs) -> StoryEntry:
-        id = title = None
 
-        if 'id' in kwargs:
-            id = kwargs.pop('id')
-        if 'title' in kwargs:
-            title = kwargs.pop('title')
+        id = kwargs.pop('id', None)
+        handle = kwargs.pop('handle', None)
+        title = kwargs.pop('title', None)
 
         if kwargs not in ({}, None):
             raise ValueError(f'StoryEntry does not have the following identifiable fields: {kwargs.keys()}')
@@ -92,14 +97,17 @@ class Config:
             matches = False
 
             if isinstance(id, int):
-                matches = id == story_entry.id
+                matches = (id == story_entry.id)
+
+            if isinstance(handle, str):
+                matches = (handle.casefold() == story_entry.handle.casefold())
             
             if isinstance(title, str):
                 matches = (title.casefold() == story_entry.title.casefold())
 
             return matches
         
-        return next((s for s in self._repr['stories'] if story_matches(s)), None)
+        return next(filter(story_matches, self._repr['stories']), None)
 
     def __enter__(self):
         self._file.__enter__()
@@ -118,10 +126,11 @@ class Config:
                 return d
             
             id = d.get('id', None)
+            handle = d.get('handle', None)
             title = d.get('title', None)
             last_read = d.get('last_read', None)
 
-            return StoryEntry(id, title, last_read)
+            return StoryEntry(id, handle, title, last_read)
 
         jobj = load(fobj, object_hook=story_entry)
 

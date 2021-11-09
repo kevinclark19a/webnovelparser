@@ -5,7 +5,7 @@ from typing import Callable
 
 from webtoepub.cmdline.conf import Config, StoryEntry
 from webtoepub.cmdline.util import story_entry_factory
-from webtoepub.epub.stats import EpubViewerArguments, EpubViewer
+from webtoepub.epub.webnovel import RoyalRoadWebNovel
 
 
 def command_parser(config: Config, parser_factory: Callable[[], ArgumentParser]):
@@ -40,21 +40,29 @@ def __show_parser(config: Config, parser_factory: Callable[[str], ArgumentParser
 def __add_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]):
     
     def action(args_namespace):
-        args = EpubViewerArguments([ args_namespace.STORY_ID ])
 
-        titles = [ args_namespace.TITLE_OVERRIDE ] + EpubViewer(args).titles
-        title = next(filter(lambda t: t is not None, titles), None)
-        if title:
-            config.add_story(StoryEntry(
-                args_namespace.STORY_ID, title,
-                args_namespace.LAST_CHAPTER
-            ))
+        try:
+            novel = RoyalRoadWebNovel(args_namespace.STORY_ID)
+        except Exception as e:
+            print(f'Failed to fetch web novel, exception was: {e}')
+            return
+        
+        handle = args_namespace.HANDLE
+        if handle is None:
+            handle = str(args_namespace.STORY_ID)
+        
+        config.add_story(StoryEntry(
+            args_namespace.STORY_ID,
+            handle,
+            novel.metadata.title,
+            args_namespace.LAST_CHAPTER
+        ))
 
     parser = parser_factory('add')
     parser.add_argument('-l', '--last-chapter', type=int,
         nargs='?', dest='LAST_CHAPTER', default=0)
-    parser.add_argument('-t', '--title-override', type=str,
-        nargs='?', dest='TITLE_OVERRIDE')
+    parser.add_argument('-n', '--handle', type=str,
+        nargs='?', dest='HANDLE')
     parser.add_argument('STORY_ID', type=int)
     parser.set_defaults(run=action)
 
@@ -62,7 +70,7 @@ def __remove_parser(config: Config, parser_factory: Callable[[str], ArgumentPars
     
     def action(args_namespace):
         for entry in args_namespace.STORY_ENTRIES:
-            config.remove_story(id=entry.id, title=entry.title)
+            config.remove_story(id=entry.id, handle=entry.handle, title=entry.title)
     
     parser = parser_factory('remove')
     parser.add_argument('STORY_ENTRIES', metavar='STORY_IDS',

@@ -39,48 +39,6 @@ def __get_chapter_bounds(starting: Optional[int], ending: Optional[int],
     
     # => (starting, ending) is (None, None)
     return last_read + 1, last_update
-    
-
-def __one_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]):
-
-    def action(args_namespace):
-
-        try:
-            novel = RoyalRoadWebNovel(
-                args_namespace.STORY_ENTRY.id,
-                args_namespace.TITLE_OVERRIDE
-            )
-        except Exception as e:
-            print(f'Failed to fetch web novel, exception was: {e}')
-            raise
-
-        start, end = __get_chapter_bounds(
-            args_namespace.STARTING_CHAPTER,
-            args_namespace.ENDING_CHAPTER,
-            args_namespace.STORY_ENTRY.last_read,
-            novel.metadata.num_chapters
-        )
-
-        EpubBuilder(EpubBuilderArguments(
-            start, end, args_namespace.FILENAME
-        ), novel).run()
-        
-        if end > args_namespace.STORY_ENTRY.last_read:
-            config.add_story(args_namespace.STORY_ENTRY.with_value(last_read=end))
-    
-    
-    parser = parser_factory('one')
-    parser.add_argument('-s', '--starting-chapter', type=int,
-        nargs='?', dest="STARTING_CHAPTER")
-    parser.add_argument('-e', '--ending-chapter', type=int,
-        nargs='?', dest="ENDING_CHAPTER")
-    parser.add_argument('-t', '--title-override', type=str,
-        nargs='?', dest="TITLE_OVERRIDE")
-    parser.add_argument('STORY_ENTRY', metavar='STORY_ID',
-        type=story_entry_factory(config))
-    parser.add_argument('FILENAME', type=str)
-
-    parser.set_defaults(run=action)
 
 def __show_update_and_get_confirmation(novel: RoyalRoadWebNovel, from_chapter: int) -> bool:
     
@@ -106,8 +64,9 @@ def __show_update_and_get_confirmation(novel: RoyalRoadWebNovel, from_chapter: i
 
 def __retrieve_and_set_name_override(novel: RoyalRoadWebNovel) -> None:
     try:
-        title_override = input('Override eBook title? Enter nothing to use the default. '
-            + 'Any instance of $t will be replaced with the default title name.\n')
+        title_override = input('Override eBook title? Enter nothing to use the default.\n'
+            + 'Any instance of $t will be replaced with the default title name.\n'
+            + 'Book Title: ')
     except EOFError:
         pass # use title_override = None
     else:
@@ -125,6 +84,49 @@ def __retrieve_filename() -> Optional[str]:
     
     return filename
 
+def __one_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]):
+
+    def action(args_namespace):
+
+        try:
+            novel = RoyalRoadWebNovel(
+                args_namespace.STORY_ENTRY.id,
+                args_namespace.TITLE_OVERRIDE
+            )
+        except Exception as e:
+            print(f'Failed to fetch web novel, exception was: {e}')
+            raise
+
+        start, end = __get_chapter_bounds(
+            args_namespace.STARTING_CHAPTER,
+            args_namespace.ENDING_CHAPTER,
+            args_namespace.STORY_ENTRY.last_read,
+            novel.metadata.num_chapters
+        )
+
+        if args_namespace.TITLE_OVERRIDE is None:
+            __retrieve_and_set_name_override(novel)
+
+        EpubBuilder(EpubBuilderArguments(
+            start, end, args_namespace.FILENAME
+        ), novel).run()
+        
+        if end > args_namespace.STORY_ENTRY.last_read:
+            config.add_story(args_namespace.STORY_ENTRY.with_value(last_read=end))
+    
+    
+    parser = parser_factory('one')
+    parser.add_argument('-s', '--starting-chapter', type=int,
+        nargs='?', dest="STARTING_CHAPTER")
+    parser.add_argument('-e', '--ending-chapter', type=int,
+        nargs='?', dest="ENDING_CHAPTER")
+    parser.add_argument('-t', '--title-override', type=str,
+        nargs='?', dest="TITLE_OVERRIDE")
+    parser.add_argument('STORY_ENTRY', metavar='STORY_ID',
+        type=story_entry_factory(config))
+    parser.add_argument('FILENAME', type=str)
+
+    parser.set_defaults(run=action)
 
 def __all_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]):
     
