@@ -44,7 +44,7 @@ class StoryEntry:
         return StoryEntry(id, handle, title, last_read)
     
     def __str__(self) -> str:
-        return f'{self.title}<{self.handle}>: last_read={self.last_read}'
+        return f'{self.title}<{self.handle}>: id={self.id};last_read={self.last_read}'
     
     def __init__(self, id: int, handle: str, title: str, last_read: int):
         self._id = id
