@@ -16,6 +16,9 @@ def run():
             args = arg_parser.parse_args()
 
             args.run(args)
+    except KeyboardInterrupt:
+        print()
+        return -1
     except Exception as e:
         print(f'Internal Error: {e}')
         return -1

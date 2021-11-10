@@ -17,9 +17,10 @@ def command_parser(config: Config, parser_factory: Callable[[], ArgumentParser])
 
     return lambda _: parser.print_help(), parser
 
-def __show_update_and_get_confirmation(novel: RoyalRoadWebNovel, from_chapter: int) -> bool:
+def __show_update_and_get_confirmation(novel: RoyalRoadWebNovel,
+    from_chapter: int, to_chapter: int) -> bool:
     
-    if not show_updates(novel, from_chapter, -1):
+    if not show_updates(novel, from_chapter, to_chapter):
         return False
 
     try:
@@ -119,9 +120,13 @@ def __all_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]
                 print(f'Failed to fetch web novel, exception was: {e}')
                 return
 
-            from_chapter = story_entry.last_read + 1
-            
-            if not __show_update_and_get_confirmation(novel, from_chapter):
+            start, end = get_chapter_bounds(
+                None, None,
+                story_entry.last_read,
+                novel.metadata.num_chapters
+            )
+
+            if not __show_update_and_get_confirmation(novel, start, end):
                 return
             
             filename = __retrieve_filename()
@@ -131,8 +136,8 @@ def __all_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]
             __retrieve_and_set_name_override(novel)
 
             EpubBuilder(EpubBuilderArguments(
-                from_chapter,
-                novel.metadata.num_chapters,
+                start,
+                end,
                 filename
             ), novel).run()
 
