@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from typing import Callable
 
 from webtoepub.cmdline.conf import Config, StoryEntry
-from webtoepub.cmdline.util import story_entry_factory, show_updates
+from webtoepub.cmdline.util import story_entry_factory, show_updates, get_chapter_bounds
 from webtoepub.epub.webnovel import RoyalRoadWebNovel
 
 
@@ -41,11 +41,14 @@ def __show_parser(config: Config, parser_factory: Callable[[str], ArgumentParser
             print(f'Failed to fetch web novel, exception was: {e}')
             return
         
-        show_updates(
-            novel,
-            args_namespace.STARTING_CHAPTER, args_namespace.ENDING_CHAPTER,
-            flag_entries=(args_namespace.STORY_ENTRY.last_read,)
+        start, end = get_chapter_bounds(
+            args_namespace.STARTING_CHAPTER,
+            args_namespace.ENDING_CHAPTER,
+            args_namespace.STORY_ENTRY.last_read,
+            novel.metadata.num_chapters
         )
+        
+        show_updates(novel, start, end, flag_entries=(args_namespace.STORY_ENTRY.last_read,))
 
     parser = parser_factory('show')
     parser.add_argument('-s', '--starting-chapter', type=int,

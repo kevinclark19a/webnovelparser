@@ -3,7 +3,7 @@ from argparse import ArgumentParser
 from typing import Callable, Optional, Tuple
 
 from webtoepub.cmdline.conf import Config, StoryEntry
-from webtoepub.cmdline.util import story_entry_factory, show_updates
+from webtoepub.cmdline.util import story_entry_factory, show_updates, get_chapter_bounds
 from webtoepub.epub.builder import EpubBuilder, EpubBuilderArguments
 from webtoepub.epub.webnovel import RoyalRoadWebNovel
 
@@ -16,29 +16,6 @@ def command_parser(config: Config, parser_factory: Callable[[], ArgumentParser])
     __all_parser(config, subparsers.add_parser)
 
     return lambda _: parser.print_help(), parser
-
-def __get_chapter_bounds(starting: Optional[int], ending: Optional[int],
-    last_read: int, last_update: int) -> Tuple[int, int]:
-
-    if (starting is not None) and (ending is not None):
-        # both values provided, use those values.
-        return starting, ending
-
-    if starting is not None: # => ending is None
-        return starting, last_update
-
-    if ending is not None: # => starting is None
-        if ending < 0: # negative index a la python lists
-            ending += (last_update + 1)
-
-        if last_read > ending:
-            # user is backtracking here, using 
-            # last_read would error out later. 
-            return 1, ending
-        return last_read + 1, ending
-    
-    # => (starting, ending) is (None, None)
-    return last_read + 1, last_update
 
 def __show_update_and_get_confirmation(novel: RoyalRoadWebNovel, from_chapter: int) -> bool:
     
@@ -97,7 +74,7 @@ def __one_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]
             print(f'Failed to fetch web novel, exception was: {e}')
             raise
 
-        start, end = __get_chapter_bounds(
+        start, end = get_chapter_bounds(
             args_namespace.STARTING_CHAPTER,
             args_namespace.ENDING_CHAPTER,
             args_namespace.STORY_ENTRY.last_read,
