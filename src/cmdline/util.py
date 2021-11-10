@@ -51,7 +51,7 @@ def show_updates(novel: RoyalRoadWebNovel,
     for idx in range(from_chapter, to_chapter + 1):
         output = f'Chapter#<{idx + 1}>: "{novel.peek_chapter_title(idx)}"'
 
-        if idx in flag_entries:
+        if (idx + 1) in flag_entries:
             print(f'[+]\t{output}')
         else:
             print(f'\t{output}')

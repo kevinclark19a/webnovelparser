@@ -107,6 +107,8 @@ def __one_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]
         if args_namespace.TITLE_OVERRIDE is None:
             __retrieve_and_set_name_override(novel)
 
+        show_updates(novel, start, end)
+
         EpubBuilder(EpubBuilderArguments(
             start, end, args_namespace.FILENAME
         ), novel).run()

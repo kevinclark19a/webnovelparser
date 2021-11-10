@@ -65,17 +65,23 @@ def __add_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]
         except Exception as e:
             print(f'Failed to fetch web novel, exception was: {e}')
             return
+
+        if args_namespace.LAST_CHAPTER < 0:
+            args_namespace.LAST_CHAPTER += (novel.metadata.num_chapters + 1)
         
         handle = args_namespace.HANDLE
         if handle is None:
             handle = str(args_namespace.STORY_ID)
         
-        config.add_story(StoryEntry(
+        entry = StoryEntry(
             args_namespace.STORY_ID,
             handle,
             novel.metadata.title,
             args_namespace.LAST_CHAPTER
-        ))
+        )
+
+        config.add_story(entry)
+        print(entry)
 
     parser = parser_factory('add')
     parser.add_argument('-l', '--last-chapter', type=int,
