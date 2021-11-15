@@ -20,14 +20,19 @@ def command_parser(config: Config, parser_factory: Callable[[], ArgumentParser])
     return lambda _: parser.print_help(), parser
 
 def __list_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]):
-    def action(_):
+    def action(args_namespace):
         stories = config.stories # Make a copy so we can sort.
         stories.sort(key=lambda entry: entry.title)
 
-        for story in stories:
-            print(story)
+        def for_each_story(f):
+            for story in stories:
+                f(story)
+            
+        if args_namespace.NAME_ONLY:
+            for_each_story(lambda s: print(s.handle))
 
     parser = parser_factory('list')
+    parser.add_argument('--name-only', dest='NAME_ONLY', action='store_true')
     parser.set_defaults(run=action)
 
 def __show_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]):
