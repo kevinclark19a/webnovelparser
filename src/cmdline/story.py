@@ -30,6 +30,8 @@ def __list_parser(config: Config, parser_factory: Callable[[str], ArgumentParser
             
         if args_namespace.NAME_ONLY:
             for_each_story(lambda s: print(s.handle))
+        else:
+            for_each_story(lambda s: print(s))
 
     parser = parser_factory('list')
     parser.add_argument('--name-only', dest='NAME_ONLY', action='store_true')
