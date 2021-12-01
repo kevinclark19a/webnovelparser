@@ -92,7 +92,7 @@ def __one_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]
         ), novel).run()
         
         if end > args_namespace.STORY_ENTRY.last_read:
-            config.add_story(args_namespace.STORY_ENTRY.with_value(last_read=end))
+            config.add_story(args_namespace.STORY_ENTRY.with_value(last_read=end+1))
     
     
     parser = parser_factory('one')
