@@ -2,13 +2,7 @@
 
 from setuptools import setup, find_packages
 
-def get_package_list(root_dir, package_name):
-    return [ package_name ] + [ f'{package_name}.{pkg}' for pkg in find_packages(root_dir) ]
-
 if __name__ == '__main__':
-
-    root_pkg_dir = 'src'
-    base_pkg_name = 'webtoepub'
 
     setup(
         name='webtoepub',
@@ -22,9 +16,6 @@ if __name__ == '__main__':
             'console_scripts': ['webtoepub=webtoepub.cmdline.main:run']
         },
 
-        include_package_data=True,
-        packages=get_package_list(root_pkg_dir, base_pkg_name),
-        package_dir={
-            base_pkg_name: root_pkg_dir
-        }
+        packages=find_packages(),
+        include_package_data=True
     )
