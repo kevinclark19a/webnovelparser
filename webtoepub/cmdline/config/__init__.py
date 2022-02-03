@@ -56,7 +56,7 @@ class Config:
 
         for bookshelf in self._repr['bookshelves']:
             if entry.coid in bookshelf:
-                bookshelf.remove_reference(entry.coid)
+                bookshelf.remove_reference(entry)
 
         if entry in self._repr['index']:
             self._repr['index'].remove_story(entry)
