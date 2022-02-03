@@ -3,7 +3,7 @@ from io import StringIO
 from json import JSONDecodeError, load, dump
 from typing import List, Type
 
-from webtoepub.cmdline.config.bookshelf import BookshelfConfigIdentifer
+from webtoepub.cmdline.config.bookshelf import Bookshelf, BookshelfConfigIdentifer
 from webtoepub.cmdline.config.entry import StoryEntry
 from webtoepub.cmdline.config.index import StoryIndex, StoryIndexConfigIdentifier
 from webtoepub.cmdline.config.objects import ConfigObject, ConfigObjectIdentifier
@@ -28,13 +28,20 @@ class Config:
             return self._repr['index'].stories
 
         stories = []
+        
+        for bookshelf in self._repr['bookshelves']:
+            if bookshelf.name == shelf_name:
+                break
 
-        if bookshelf := self._repr['bookselves'].get(shelf_name, None):
-            for ref in bookshelf.get_references():
-                if story := self._repr['index'].fetch_story(ref):
-                    stories.append(story)
+        for ref in bookshelf.get_references():
+            if story := self._repr['index'].fetch_story(ref):
+                stories.append(story)
 
         return stories
+
+    @property
+    def bookshelves(self) -> List[Bookshelf]:
+        return self._repr['bookshelves'][:]
 
     def add_story(self, story: StoryEntry, shelves=None) -> None:
         # Ensure uniqueness on id.
@@ -78,6 +85,29 @@ class Config:
             return matches
         
         return next(filter(story_matches, self._repr['index'].stories), None)
+
+    def create_bookshelf(self, name: str):
+        
+        if self.fetch_bookshelf(name) is None:    
+            self._repr['bookshelves'].append(Bookshelf(name, []))
+            return True
+
+        return False
+    
+    def delete_bookshelf(self, name: str):
+        
+        if shelf := self.fetch_bookshelf(name):
+            self._repr['bookshelves'].remove(shelf)
+            return True
+        
+        return False
+    
+    def fetch_bookshelf(self, name: str) -> Bookshelf:
+        try:
+            return next(filter(lambda bs: bs.name == name, self._repr['bookshelves']))
+        except StopIteration:
+            return None
+
 
     def __enter__(self):
         self._file.__enter__()

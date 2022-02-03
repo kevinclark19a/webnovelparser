@@ -6,6 +6,7 @@ import traceback
 from webtoepub.cmdline.config import Config
 from webtoepub.cmdline.fetch import command_parser as fetch_command_parser
 from webtoepub.cmdline.story import command_parser as story_command_parser
+from webtoepub.cmdline.shelf import command_parser as shelf_command_parser
 
 _CONFIG_FILE_LOCATION = expanduser('~/.config/webtoepub.json')
 
@@ -33,6 +34,9 @@ def __arg_parser_factory(config: Config) -> ArgumentParser:
 
     story_action, story_parser = story_command_parser(config, lambda: subparser_factory.add_parser('story'))
     story_parser.set_defaults(run=story_action)
+
+    shelf_action, shelf_parser = shelf_command_parser(config, lambda: subparser_factory.add_parser('shelf'))
+    shelf_parser.set_defaults(run=shelf_action)
 
     fetch_action, fetch_parser = fetch_command_parser(config, lambda: subparser_factory.add_parser('fetch'))
     fetch_parser.set_defaults(run=fetch_action)

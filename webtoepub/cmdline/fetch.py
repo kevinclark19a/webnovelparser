@@ -14,7 +14,7 @@ def command_parser(config: Config, parser_factory: Callable[[], ArgumentParser])
     subparsers = parser.add_subparsers()
 
     __one_parser(config, subparsers.add_parser)
-    __all_parser(config, subparsers.add_parser)
+    __multi_parser(config, subparsers.add_parser)
 
     return lambda _: parser.print_help(), parser
 
@@ -104,40 +104,47 @@ def __one_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]
 
     parser.set_defaults(run=action)
 
-def __all_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]):
-    
-    def action(_):
+def __multi_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]):
+
+    def fetch_one(story_entry: StoryEntry):
+
+        try:
+            novel = RoyalRoadWebNovel(story_entry.id)
+        except Exception as e:
+            print(f'Failed to fetch web novel, exception was: {e}')
+            return
+
+        start, end = get_chapter_bounds(
+            None, None,
+            story_entry.last_read,
+            novel.metadata.num_chapters
+        )
+
+        if not __show_update_and_get_confirmation(novel, start, end):
+            return
         
-        def fetch_one(story_entry: StoryEntry):
+        filename = f"{story_entry.handle}_{start+1}_{end+1}.epub"
+        __retrieve_and_set_name_override(novel)
 
-            try:
-                novel = RoyalRoadWebNovel(story_entry.id)
-            except Exception as e:
-                print(f'Failed to fetch web novel, exception was: {e}')
-                return
+        EpubBuilder(EpubBuilderArguments(
+            start,
+            end,
+            filename
+        ), novel).run()
 
-            start, end = get_chapter_bounds(
-                None, None,
-                story_entry.last_read,
-                novel.metadata.num_chapters
-            )
-
-            if not __show_update_and_get_confirmation(novel, start, end):
-                return
-            
-            filename = f"{story_entry.handle}_{start+1}_{end+1}.epub"
-            __retrieve_and_set_name_override(novel)
-
-            EpubBuilder(EpubBuilderArguments(
-                start,
-                end,
-                filename
-            ), novel).run()
-
-            config.add_story(story_entry.with_value(last_read=novel.metadata.num_chapters))
+        config.add_story(story_entry.with_value(last_read=novel.metadata.num_chapters))
     
+    def bookshelf(args_namespace):
+        for story_entry in config.stories(shelf_name=args_namespace.BOOKSHELF):
+            fetch_one(story_entry)
+    
+    def all(_):
         for story_entry in config.stories():
             fetch_one(story_entry)
 
     parser = parser_factory('all')
-    parser.set_defaults(run=action)
+    parser.set_defaults(run=all)
+
+    parser = parser_factory('bookshelf')
+    parser.add_argument('BOOKSHELF', type=str)
+    parser.set_defaults(run=bookshelf)
