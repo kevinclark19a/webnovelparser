@@ -9,11 +9,11 @@ if __name__ == '__main__':
         version='0.0.1',
         description='',
 
-        python_requires='>=3.6',
+        python_requires='>=3.8',
         install_requires=['requests', 'bs4', 'setuptools'],
 
         entry_points= {
-            'console_scripts': ['webtoepub=webtoepub.cmdline.main:run']
+            'console_scripts': ['webtoepub=webtoepub.cmdline:run']
         },
 
         packages=find_packages(),

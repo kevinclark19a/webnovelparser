@@ -1,8 +1,9 @@
 
 from argparse import ArgumentParser
-from typing import Callable, Optional, Tuple
+from typing import Callable, Optional
 
-from webtoepub.cmdline.conf import Config, StoryEntry
+from webtoepub.cmdline.config import Config
+from webtoepub.cmdline.config.entry import StoryEntry
 from webtoepub.cmdline.util import story_entry_factory, show_updates, get_chapter_bounds
 from webtoepub.epub.builder import EpubBuilder, EpubBuilderArguments
 from webtoepub.epub.webnovel import RoyalRoadWebNovel
@@ -82,10 +83,10 @@ def __one_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]
             novel.metadata.num_chapters
         )
 
+        show_updates(novel, start, end)
+
         if args_namespace.TITLE_OVERRIDE is None:
             __retrieve_and_set_name_override(novel)
-
-        show_updates(novel, start, end)
 
         EpubBuilder(EpubBuilderArguments(
             start, end, args_namespace.FILENAME
@@ -143,7 +144,7 @@ def __all_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]
 
             config.add_story(story_entry.with_value(last_read=novel.metadata.num_chapters))
     
-        for story_entry in config.stories:
+        for story_entry in config.stories():
             fetch_one(story_entry)
 
     parser = parser_factory('all')

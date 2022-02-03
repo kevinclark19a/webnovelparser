@@ -1,7 +1,8 @@
 
 from typing import Callable, Optional, Tuple
 
-from webtoepub.cmdline.conf import Config, StoryEntry
+from webtoepub.cmdline.config import Config 
+from webtoepub.cmdline.config.entry import StoryEntry
 from webtoepub.epub.webnovel import RoyalRoadWebNovel
 
 

@@ -2,7 +2,8 @@
 from argparse import ArgumentParser
 from typing import Callable
 
-from webtoepub.cmdline.conf import Config, StoryEntry
+from webtoepub.cmdline.config import Config
+from webtoepub.cmdline.config.entry import StoryEntry
 from webtoepub.cmdline.util import story_entry_factory, show_updates, get_chapter_bounds
 from webtoepub.epub.webnovel import RoyalRoadWebNovel
 
@@ -21,7 +22,7 @@ def command_parser(config: Config, parser_factory: Callable[[], ArgumentParser])
 
 def __list_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]):
     def action(args_namespace):
-        stories = config.stories # Make a copy so we can sort.
+        stories = config.stories() # Make a copy so we can sort.
         stories.sort(key=lambda entry: entry.title)
 
         def for_each_story(f):
