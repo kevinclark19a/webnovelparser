@@ -44,7 +44,13 @@ class Config:
         return self._repr['bookshelves'][:]
 
     def add_story(self, story: StoryEntry, shelves=None) -> None:
-        # Ensure uniqueness on id.
+
+        # Just updating the entry
+        if story in self._repr['index']:
+            self._repr[story.coid] = story
+            return
+
+        # Not an exact match, ensure uniqueness on id.
         entry = self.fetch_story(id=story.id)
         if entry in self._repr['index']:
             self.remove_story(id=story.id)

@@ -86,7 +86,7 @@ def __remove_parser(config: Config, parser_factory: Callable[[str], ArgumentPars
     def action(args_namespace):
         if bookshelf := config.fetch_bookshelf(args_namespace.SHELF_NAME):
             for entry in args_namespace.STORY_ENTRIES:
-                if bookshelf.remove_reference(entry.coid):
+                if bookshelf.remove_reference(entry):
                     print(f"Removed {entry}.")
         else:
             print(f"Bookshelf '{args_namespace.SHELF_NAME}' doesn't exist!")
