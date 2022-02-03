@@ -1,4 +1,4 @@
-recursive-include src/**/data *
+recursive-include webtoepub/**/data *
 global-exclude *.pyc
 global-exclude ._*
 global-exclude *.mo

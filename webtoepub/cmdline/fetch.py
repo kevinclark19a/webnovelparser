@@ -54,15 +54,6 @@ def __retrieve_and_set_name_override(novel: RoyalRoadWebNovel) -> None:
     
     novel.set_name_override(title_override)
 
-def __retrieve_filename() -> Optional[str]:
-    try:
-        filename = input('eBook filename: ')
-    except EOFError:
-        print('No filename provided, skipping fetch.')
-        return None
-    
-    return filename
-
 def __one_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]):
 
     def action(args_namespace):
@@ -88,6 +79,9 @@ def __one_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]
         if args_namespace.TITLE_OVERRIDE is None:
             __retrieve_and_set_name_override(novel)
 
+        if args_namespace.FILENAME is None:
+            args_namespace.FILENAME = f"./{args_namespace.STORY_ENTRY.handle}_{start+1}_{end+1}.epub"
+
         EpubBuilder(EpubBuilderArguments(
             start, end, args_namespace.FILENAME
         ), novel).run()
@@ -103,9 +97,10 @@ def __one_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]
         nargs='?', dest="ENDING_CHAPTER")
     parser.add_argument('-t', '--title-override', type=str,
         nargs='?', dest="TITLE_OVERRIDE")
+    parser.add_argument('-o', '--filename', type=str,
+        nargs='?', dest="FILENAME")
     parser.add_argument('STORY_ENTRY', metavar='STORY_ID',
         type=story_entry_factory(config))
-    parser.add_argument('FILENAME', type=str)
 
     parser.set_defaults(run=action)
 
@@ -130,10 +125,7 @@ def __all_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]
             if not __show_update_and_get_confirmation(novel, start, end):
                 return
             
-            filename = __retrieve_filename()
-            if filename is None:
-                return
-
+            filename = f"{story_entry.handle}_{start+1}_{end+1}.epub"
             __retrieve_and_set_name_override(novel)
 
             EpubBuilder(EpubBuilderArguments(
