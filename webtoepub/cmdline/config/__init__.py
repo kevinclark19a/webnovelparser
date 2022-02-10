@@ -47,7 +47,7 @@ class Config:
 
         # Just updating the entry
         if story in self._repr['index']:
-            self._repr[story.coid] = story
+            self._repr['index'].add_story(story)
             return
 
         # Not an exact match, ensure uniqueness on id.

@@ -43,7 +43,7 @@ class StoryEntry(ConfigObject):
         if kwargs not in ({}, None):
             raise ValueError(f'StoryEntry does not have the following fields: {kwargs.keys()}')
 
-        return StoryEntry(id, handle, title, last_read)
+        return StoryEntry(id, handle, title, last_read, coid=self.coid)
     
     def __str__(self) -> str:
         return f'{self.title}<{self.handle}>: id={self.id};last_read={self.last_read}'
