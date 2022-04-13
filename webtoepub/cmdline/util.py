@@ -17,7 +17,7 @@ def get_chapter_bounds(starting: Optional[int], ending: Optional[int],
             return None
 
         if value < 0:
-            return value + last_update
+            return max(value + last_update, 0)
         
         return value - 1
     
