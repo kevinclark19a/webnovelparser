@@ -100,7 +100,7 @@ def compute_chapter_info(novel: RoyalRoadWebNovel, start: Optional[int], end: Op
         patterns = [
             # These are processed in order; put more general patterns further down.
             r'Chapter (?P<chpt_info>[^:]+):',
-            r'Chapter (?P<chpt_info>[^-]+) -',
+            r'Chapter (?P<chpt_info>[^–-]+) [–-]',
             r'Chapter (?P<chpt_info>[\d]+)',
             r'^(?P<chpt_info>[\d]+)[:.,]',
             r'(?P<chpt_info>[\d]+)'
