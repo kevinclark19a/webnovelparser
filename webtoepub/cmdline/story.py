@@ -4,7 +4,7 @@ from typing import Callable
 
 from webtoepub.cmdline.config import Config
 from webtoepub.cmdline.config.entry import StoryEntry
-from webtoepub.cmdline.util import story_entry_factory, show_updates, get_chapter_bounds
+from webtoepub.cmdline.util import compute_chapter_info, story_entry_factory, show_updates, get_chapter_bounds
 from webtoepub.epub.webnovel import RoyalRoadWebNovel
 
 

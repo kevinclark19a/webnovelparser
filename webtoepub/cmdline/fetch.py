@@ -4,7 +4,7 @@ from typing import Callable, Optional
 
 from webtoepub.cmdline.config import Config
 from webtoepub.cmdline.config.entry import StoryEntry
-from webtoepub.cmdline.util import story_entry_factory, show_updates, get_chapter_bounds
+from webtoepub.cmdline.util import compute_chapter_info, story_entry_factory, show_updates, get_chapter_bounds
 from webtoepub.epub.builder import EpubBuilder, EpubBuilderArguments
 from webtoepub.epub.webnovel import RoyalRoadWebNovel
 
@@ -41,17 +41,20 @@ def __show_update_and_get_confirmation(novel: RoyalRoadWebNovel,
             except EOFError:
                 return False
 
-def __retrieve_and_set_name_override(novel: RoyalRoadWebNovel) -> None:
+def __retrieve_and_set_name_override(novel: RoyalRoadWebNovel, start: Optional[int]=None, end: Optional[int]=None) -> None:
     try:
         title_override = input('Override eBook title? Enter nothing to use the default.\n'
-            + 'Any instance of $t will be replaced with the default title name.\n'
+            + 'Any instance of $t will be replaced with the novel\'s title name.\n'
             + 'Book Title: ')
     except EOFError:
         pass # use title_override = None
-    else:
-        # empty string is identical to None, don't need to special case it.
-        title_override = title_override.replace('$t', novel.metadata.title)
+
+    # A saner default includes chapter info (if present), so let's do that here.
+    if title_override in ("", None):
+        title_override = f'$t{compute_chapter_info(novel, start, end)}'
     
+    title_override = title_override.replace('$t', novel.metadata.title)
+
     novel.set_name_override(title_override)
 
 def __one_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]):
@@ -77,7 +80,7 @@ def __one_parser(config: Config, parser_factory: Callable[[str], ArgumentParser]
         show_updates(novel, start, end)
 
         if args_namespace.TITLE_OVERRIDE is None:
-            __retrieve_and_set_name_override(novel)
+            __retrieve_and_set_name_override(novel, start, end)
 
         if args_namespace.FILENAME is None:
             args_namespace.FILENAME = f"./{args_namespace.STORY_ENTRY.handle}_{start+1}_{end+1}.epub"
@@ -124,7 +127,7 @@ def __multi_parser(config: Config, parser_factory: Callable[[str], ArgumentParse
             return
         
         filename = f"{story_entry.handle}_{start+1}_{end+1}.epub"
-        __retrieve_and_set_name_override(novel)
+        __retrieve_and_set_name_override(novel, start, end)
 
         EpubBuilder(EpubBuilderArguments(
             start,

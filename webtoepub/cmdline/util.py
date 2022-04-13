@@ -1,4 +1,5 @@
 
+from re import search
 from typing import Callable, Optional, Tuple
 
 from webtoepub.cmdline.config import Config 
@@ -42,7 +43,6 @@ def get_chapter_bounds(starting: Optional[int], ending: Optional[int],
     # => (starting, ending) is (None, None)
     return last_read + 1, last_update
 
-
 def story_entry_factory(config: Config) -> Callable[[str], StoryEntry]:
     
     def story_entry(identifier: str) -> StoryEntry:
@@ -75,7 +75,7 @@ def show_updates(novel: RoyalRoadWebNovel,
     from_chapter: int, to_chapter: int,
     flag_entries: Tuple[int]=()) -> bool:
     
-    print(f'Fetching chapters for "{novel.metadata.title}"...')
+    print(f'Fetching "{novel.metadata.title}{compute_chapter_info(novel, from_chapter, to_chapter)}"...')
 
     if to_chapter < from_chapter:
         print('\tNo chapters found.')
@@ -90,3 +90,41 @@ def show_updates(novel: RoyalRoadWebNovel,
             print(f'\t{output}')
     
     return True
+
+def compute_chapter_info(novel: RoyalRoadWebNovel, start: Optional[int], end: Optional[int]):
+
+    def fetch_chapter_name(idx):
+        if not isinstance(idx, int):
+            return ""
+        
+        patterns = [
+            # These are processed in order; put more general patterns further down.
+            r'Chapter (?P<chpt_info>[^:]+):',
+            r'Chapter (?P<chpt_info>[^-]+) -',
+            r'Chapter (?P<chpt_info>[\d]+)',
+            r'^(?P<chpt_info>[\d]+)[:.,]',
+            r'(?P<chpt_info>[\d]+)'
+        ]
+
+        try:
+            pre_processed = novel.peek_chapter_title(idx)
+        except ValueError:
+            return ''
+        
+        for p in patterns:
+            match = search(p, pre_processed)
+            if match is not None:
+                return match.group('chpt_info')
+        
+        return pre_processed
+    
+    first, last = fetch_chapter_name(start), fetch_chapter_name(end)
+
+    if first and last:
+        return f': Chpts. {first} - {last}'
+    
+    if last: # => first == ""
+        return f' ({last})'
+    
+    # => first == "" and last == ""
+    return ''
