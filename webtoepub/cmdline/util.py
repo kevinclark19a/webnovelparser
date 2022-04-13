@@ -121,10 +121,12 @@ def compute_chapter_info(novel: RoyalRoadWebNovel, start: Optional[int], end: Op
     first, last = fetch_chapter_name(start), fetch_chapter_name(end)
 
     if first and last:
+        if first == last:
+            return f': Chpts. {last}'
         return f': Chpts. {first} - {last}'
     
     if last: # => first == ""
         return f' ({last})'
     
-    # => first == "" and last == ""
+    # => last == ""
     return ''
