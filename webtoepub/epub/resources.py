@@ -124,7 +124,7 @@ class NovelChapter:
         # First, pick a better width value for tables.
         for td in content.find_all(['table', 'td'], {'width': True}):
             # TODO: This is a placeholder value, find a better one?
-            td['width'] = 400
+            td['width'] = '30%'
         
         # Next, turn `align` attrs into style
         for tag in content.find_all(True, {'align': True}):
