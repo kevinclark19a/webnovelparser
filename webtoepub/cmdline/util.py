@@ -102,7 +102,7 @@ def compute_chapter_info(novel: RoyalRoadWebNovel, start: Optional[int], end: Op
             r'Chapter (?P<chpt_info>[^:]+):',
             r'Chapter (?P<chpt_info>[^–-]+) [–-]',
             r'Chapter (?P<chpt_info>[\d]+)',
-            r'^(?P<chpt_info>[\d]+)[:.,]'
+            r'^(?P<chpt_info>[\d]+)[( -):.,]'
         ]
 
         try:
