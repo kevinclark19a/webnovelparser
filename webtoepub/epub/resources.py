@@ -2,7 +2,7 @@
 from typing import List
 
 from bs4.element import Tag
-from re import sub
+from re import sub, compile
 from requests import get
 
 from webtoepub.epub.templates import XMLTemplates
@@ -116,6 +116,34 @@ class NovelChapter:
                 images.append(image)
 
         return images
+
+    @staticmethod    
+    def __fix_chapter_contents(content: Tag) -> None:
+
+        # First, pick a better width value for tables.
+        for td in content.find_all(['table', 'td'], {'width': True}):
+            # TODO: This is a placeholder value, find a better one?
+            td['width'] = 400
+        
+        # Next, turn `align` attrs into style
+        attrs = {
+            'align': True,
+            # This black magic matches any substrings that
+            #   *   are at the start of the string
+            #   *   are not immediately followed by 'text-align'
+            #   *   are at the end of the string
+            # Which, all together, filters out  styles with text-align
+            'style': [compile(r'^(.(?!text-align:))*$'), False]
+        }
+
+        for tag in content.find_all(True, attrs):
+            text_align = f'text-align: {td["align"]}'
+
+            if tag.has_attr('style'):
+                tag['style'] += f'; {text_align}'
+            else:
+                tag['style'] = text_align
+
 
 
 class NovelMetadata:
