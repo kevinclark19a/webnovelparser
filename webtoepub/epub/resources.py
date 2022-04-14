@@ -128,11 +128,10 @@ class NovelChapter:
         
         print_one = 10
         # Next, turn `align` attrs into style
-        tag: Tag
         for tag in content.find_all(True, {'align': True}):
-            text_align = f'text-align: {td["align"]}'
+            text_align = f'text-align: {tag["align"]}'
 
-            del td['align']
+            del tag['align']
             if not tag.has_attr('style'):
                 tag['style'] = text_align
             
