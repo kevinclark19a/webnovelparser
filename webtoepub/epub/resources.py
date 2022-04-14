@@ -125,7 +125,9 @@ class NovelChapter:
             # TODO: This is a placeholder value, find a better one?
             td['width'] = 400
         
+        print_one = 10
         # Next, turn `align` attrs into style
+        tag: Tag
         for tag in content.find_all(True, {'align': True}):
             text_align = f'text-align: {td["align"]}'
 
@@ -135,6 +137,10 @@ class NovelChapter:
             
             elif 'text-align' not in tag['style']:
                 tag['style'] += f'; {text_align}'
+
+            if print_one < 0:
+                print_one -= 1
+                print(tag.attrs)
 
 
 
