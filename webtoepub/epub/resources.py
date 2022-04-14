@@ -126,24 +126,15 @@ class NovelChapter:
             td['width'] = 400
         
         # Next, turn `align` attrs into style
-        attrs = {
-            'align': True,
-            # This black magic matches any substrings that
-            #   *   are at the start of the string
-            #   *   are not immediately followed by 'text-align'
-            #   *   are at the end of the string
-            # Which, all together, filters out  styles with text-align
-            'style': [compile(r'^(.(?!text-align:))*$'), False]
-        }
-
-        for tag in content.find_all(True, attrs):
+        for tag in content.find_all(True, {'align': True}):
             text_align = f'text-align: {td["align"]}'
-            del td['align']
 
-            if tag.has_attr('style'):
-                tag['style'] += f'; {text_align}'
-            else:
+            del td['align']
+            if not tag.has_attr('style'):
                 tag['style'] = text_align
+            
+            elif 'text-align' not in tag['style']:
+                tag['style'] += f'; {text_align}'
 
 
 
