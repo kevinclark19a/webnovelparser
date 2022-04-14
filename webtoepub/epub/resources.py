@@ -61,6 +61,7 @@ class NovelChapter:
         title_tag.string = title
         body.append(title_tag)
         
+        NovelChapter.__fix_chapter_contents(chapter_contents)
         body.append(chapter_contents)
 
         self._contents = contents
