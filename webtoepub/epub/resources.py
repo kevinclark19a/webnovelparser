@@ -138,6 +138,7 @@ class NovelChapter:
 
         for tag in content.find_all(True, attrs):
             text_align = f'text-align: {td["align"]}'
+            del td['align']
 
             if tag.has_attr('style'):
                 tag['style'] += f'; {text_align}'
