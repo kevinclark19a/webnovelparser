@@ -37,7 +37,7 @@ def __show_parser(config: Config, parser_factory: Callable[[str], ArgumentParser
     def action(args_namespace):
         stories = config.stories(args_namespace.SHELF_NAME)
         stories.sort(key=lambda story: story.handle)
-        print("\n".join(s for s in stories))
+        print("\n".join(str(s) for s in stories))
 
     parser = parser_factory('show')
     parser.add_argument('SHELF_NAME', type=str)
