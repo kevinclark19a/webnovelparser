@@ -138,7 +138,10 @@ def __multi_parser(config: Config, parser_factory: Callable[[str], ArgumentParse
         config.add_story(story_entry.with_value(last_read=novel.metadata.num_chapters))
     
     def bookshelf(args_namespace):
-        for story_entry in config.stories(shelf_name=args_namespace.BOOKSHELF):
+        stories = config.stories(shelf_name=args_namespace.BOOKSHELF)
+        stories.sort(key=lambda story: story.handle)
+
+        for story_entry in stories:
             fetch_one(story_entry)
     
     def all(_):
