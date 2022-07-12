@@ -8,7 +8,7 @@ from webnovelparser.cmdline.fetch import command_parser as fetch_command_parser
 from webnovelparser.cmdline.story import command_parser as story_command_parser
 from webnovelparser.cmdline.shelf import command_parser as shelf_command_parser
 
-_CONFIG_FILE_LOCATION = expanduser('~/.config/webtoepub.json')
+_CONFIG_FILE_LOCATION = expanduser('~/.config/webnovelparser.json')
 
 def run():
     try:

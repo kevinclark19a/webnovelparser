@@ -12,7 +12,7 @@ class XMLTemplates:
         if not filename.endswith(".xml"):
             filename += ".xml"
         
-        xmltext = resource_string("webtoepub.epub", f'{XMLTemplates.__BASE_DIRECTORY}/{filename}')
+        xmltext = resource_string("webnovelparser.epub", f'{XMLTemplates.__BASE_DIRECTORY}/{filename}')
         return BeautifulSoup(xmltext, "xml")
 
     @staticmethod
@@ -20,5 +20,5 @@ class XMLTemplates:
         if not filename.endswith(".xhtml"):
             filename += ".xhtml"
         
-        xmltext = resource_string("webtoepub.epub", f'{XMLTemplates.__BASE_DIRECTORY}/{filename}')
+        xmltext = resource_string("webnovelparser.epub", f'{XMLTemplates.__BASE_DIRECTORY}/{filename}')
         return BeautifulSoup(xmltext, "html.parser")
