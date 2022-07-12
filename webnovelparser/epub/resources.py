@@ -5,7 +5,7 @@ from bs4.element import Tag
 from re import sub, compile
 from requests import get
 
-from webtoepub.epub.templates import XMLTemplates
+from webnovelparser.epub.templates import XMLTemplates
 
 
 def _fix_filename(title: str) -> str:

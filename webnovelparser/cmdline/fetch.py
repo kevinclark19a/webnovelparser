@@ -2,11 +2,11 @@
 from argparse import ArgumentParser
 from typing import Callable, Optional
 
-from webtoepub.cmdline.config import Config
-from webtoepub.cmdline.config.entry import StoryEntry
-from webtoepub.cmdline.util import compute_chapter_info, story_entry_factory, show_updates, get_chapter_bounds
-from webtoepub.epub.builder import EpubBuilder, EpubBuilderArguments
-from webtoepub.epub.webnovel import RoyalRoadWebNovel
+from webnovelparser.cmdline.config import Config
+from webnovelparser.cmdline.config.entry import StoryEntry
+from webnovelparser.cmdline.util import compute_chapter_info, story_entry_factory, show_updates, get_chapter_bounds
+from webnovelparser.epub.builder import EpubBuilder, EpubBuilderArguments
+from webnovelparser.epub.webnovel import RoyalRoadWebNovel
 
 
 def command_parser(config: Config, parser_factory: Callable[[], ArgumentParser]):

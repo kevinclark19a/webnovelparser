@@ -1,8 +1,8 @@
 
 from typing import List
 
-from webtoepub.cmdline.config.objects import ConfigObject, ConfigObjectIdentifier
-from webtoepub.cmdline.config.entry import StoryEntry, StoryEntryConfigIdentifier
+from webnovelparser.cmdline.config.objects import ConfigObject, ConfigObjectIdentifier
+from webnovelparser.cmdline.config.entry import StoryEntry, StoryEntryConfigIdentifier
 
 class Bookshelf(ConfigObject):
 

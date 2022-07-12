@@ -2,10 +2,10 @@
 from argparse import ArgumentParser
 from typing import Callable
 
-from webtoepub.cmdline.config import Config, bookshelf
-from webtoepub.cmdline.config.entry import StoryEntry
-from webtoepub.cmdline.util import story_entry_factory, show_updates, get_chapter_bounds
-from webtoepub.epub.webnovel import RoyalRoadWebNovel
+from webnovelparser.cmdline.config import Config, bookshelf
+from webnovelparser.cmdline.config.entry import StoryEntry
+from webnovelparser.cmdline.util import story_entry_factory, show_updates, get_chapter_bounds
+from webnovelparser.epub.webnovel import RoyalRoadWebNovel
 
 
 def command_parser(config: Config, parser_factory: Callable[[], ArgumentParser]):

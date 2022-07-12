@@ -2,9 +2,9 @@
 from re import search
 from typing import Callable, Optional, Tuple
 
-from webtoepub.cmdline.config import Config 
-from webtoepub.cmdline.config.entry import StoryEntry
-from webtoepub.epub.webnovel import RoyalRoadWebNovel
+from webnovelparser.cmdline.config import Config 
+from webnovelparser.cmdline.config.entry import StoryEntry
+from webnovelparser.epub.webnovel import RoyalRoadWebNovel
 
 
 def get_chapter_bounds(starting: Optional[int], ending: Optional[int],

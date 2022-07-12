@@ -1,9 +1,9 @@
 
 from typing import Dict, List
-from webtoepub.cmdline import config
+from webnovelparser.cmdline import config
 
-from webtoepub.cmdline.config.entry import StoryEntry, StoryEntryConfigIdentifier
-from webtoepub.cmdline.config.objects import ConfigObject, ConfigObjectIdentifier
+from webnovelparser.cmdline.config.entry import StoryEntry, StoryEntryConfigIdentifier
+from webnovelparser.cmdline.config.objects import ConfigObject, ConfigObjectIdentifier
 
 
 class StoryIndex(ConfigObject):

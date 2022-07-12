@@ -4,8 +4,8 @@ from zipfile import ZipFile
 from bs4 import BeautifulSoup
 from bs4.element import Tag
 
-from webtoepub.epub.resources import NovelMetadata, NovelChapter
-from webtoepub.epub.templates import XMLTemplates
+from webnovelparser.epub.resources import NovelMetadata, NovelChapter
+from webnovelparser.epub.templates import XMLTemplates
 
 
 class _TableOfContents:

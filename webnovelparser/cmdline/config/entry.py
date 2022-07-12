@@ -1,6 +1,6 @@
 
 
-from webtoepub.cmdline.config.objects import ConfigObject, ConfigObjectIdentifier
+from webnovelparser.cmdline.config.objects import ConfigObject, ConfigObjectIdentifier
 
 class StoryEntry(ConfigObject):
 

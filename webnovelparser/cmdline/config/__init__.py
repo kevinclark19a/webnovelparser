@@ -3,10 +3,10 @@ from io import StringIO
 from json import JSONDecodeError, load, dump
 from typing import List, Type
 
-from webtoepub.cmdline.config.bookshelf import Bookshelf, BookshelfConfigIdentifer
-from webtoepub.cmdline.config.entry import StoryEntry
-from webtoepub.cmdline.config.index import StoryIndex, StoryIndexConfigIdentifier
-from webtoepub.cmdline.config.objects import ConfigObject, ConfigObjectIdentifier
+from webnovelparser.cmdline.config.bookshelf import Bookshelf, BookshelfConfigIdentifer
+from webnovelparser.cmdline.config.entry import StoryEntry
+from webnovelparser.cmdline.config.index import StoryIndex, StoryIndexConfigIdentifier
+from webnovelparser.cmdline.config.objects import ConfigObject, ConfigObjectIdentifier
 
 
 class Config:

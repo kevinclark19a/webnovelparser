@@ -2,7 +2,7 @@
 from requests import get
 from bs4 import BeautifulSoup
 
-from webtoepub.epub.resources import NovelMetadata, NovelChapter
+from webnovelparser.epub.resources import NovelMetadata, NovelChapter
 
 
 class _RoyalRoadStoryPage:

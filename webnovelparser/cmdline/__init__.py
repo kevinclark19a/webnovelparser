@@ -3,10 +3,10 @@ from argparse import ArgumentParser
 from os.path import expanduser
 import traceback
 
-from webtoepub.cmdline.config import Config
-from webtoepub.cmdline.fetch import command_parser as fetch_command_parser
-from webtoepub.cmdline.story import command_parser as story_command_parser
-from webtoepub.cmdline.shelf import command_parser as shelf_command_parser
+from webnovelparser.cmdline.config import Config
+from webnovelparser.cmdline.fetch import command_parser as fetch_command_parser
+from webnovelparser.cmdline.story import command_parser as story_command_parser
+from webnovelparser.cmdline.shelf import command_parser as shelf_command_parser
 
 _CONFIG_FILE_LOCATION = expanduser('~/.config/webtoepub.json')
 

@@ -2,7 +2,7 @@
 from concurrent.futures import ThreadPoolExecutor
 from threading import Lock
 
-from webtoepub.epub.writer import EpubFile
+from webnovelparser.epub.writer import EpubFile
 
 
 class EpubBuilderArguments:
