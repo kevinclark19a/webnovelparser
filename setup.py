@@ -5,7 +5,7 @@ from setuptools import setup, find_packages
 if __name__ == '__main__':
 
     setup(
-        name='webtoepub',
+        name='webnovelparser',
         version='0.0.1',
         description='',
 
@@ -13,7 +13,7 @@ if __name__ == '__main__':
         install_requires=['requests', 'bs4', 'setuptools'],
 
         entry_points= {
-            'console_scripts': ['webtoepub=webtoepub.cmdline:run']
+            'console_scripts': ['webnovelparser=webnovelparser.cmdline:run']
         },
 
         packages=find_packages(),
