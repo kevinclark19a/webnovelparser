@@ -1,2 +1,2 @@
 
-re-implementation of web to epub chrome extension, in python.
+re-implementation of [WebToEpub chrome extension](https://github.com/dteviot/WebToEpub), in python.
