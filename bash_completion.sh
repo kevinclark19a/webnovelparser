@@ -34,7 +34,7 @@ __webnovelparser_story_handle_completion() {
     local story_handles
 
     story_handles=`webnovelparser story list --name-only | xargs printf "%s "`
-    COMPREPLY=($(compgen -W "$story_handles" -- ${COMP_WORDS[3]}))
+    COMPREPLY=($(compgen -W "$story_handles" -- ${COMP_WORDS[COMP_CWORD]}))
 }
 
 __webnovelparser_story_list_completion() {
