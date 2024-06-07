@@ -55,6 +55,6 @@ class EpubBuilder:
 
             epub.add_cover(self._novel.get_cover_image())
 
-            with ThreadPoolExecutor() as executor:
+            with ThreadPoolExecutor(10) as executor:
                 for idx in range(self._options.starting_chapter, self._options.ending_chapter + 1):
                     executor.submit(fetch_and_add_chapter, idx)

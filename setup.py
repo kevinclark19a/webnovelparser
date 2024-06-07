@@ -10,7 +10,7 @@ if __name__ == '__main__':
         description='',
 
         python_requires='>=3.8',
-        install_requires=['requests', 'bs4', 'setuptools'],
+        install_requires=['requests', 'bs4', 'setuptools', 'tenacity'],
 
         entry_points= {
             'console_scripts': ['webnovelparser=webnovelparser.cmdline:run']

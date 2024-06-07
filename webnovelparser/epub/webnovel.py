@@ -1,6 +1,7 @@
 
-from requests import get
+from requests import HTTPError, get
 from bs4 import BeautifulSoup
+from tenacity import retry, retry_if_exception_type, stop_after_attempt, wait_random_exponential
 
 from webnovelparser.epub.resources import NovelMetadata, NovelChapter
 
@@ -9,14 +10,14 @@ class _RoyalRoadStoryPage:
 
     @staticmethod
     def __extract_author(html_obj: BeautifulSoup) -> str:
-        raw_text: str = html_obj.find('h4', property="author").text.strip()
+        raw_text: str = html_obj.find('div', class_='fic-title').find('h4').text
         if raw_text.startswith('by'):
             raw_text = raw_text[2:].strip()
         return raw_text
 
     @staticmethod
     def __extract_title(html_obj: BeautifulSoup) -> str:
-        return html_obj.find('h1', property="name").text
+        return html_obj.find('div', class_='fic-title').find('h1').text
 
     @staticmethod
     def __extract_cover_image_url(html_obj: BeautifulSoup) -> str:
@@ -96,6 +97,12 @@ class RoyalRoadWebNovel:
         return _RoyalRoadStoryPage(response.url, response.text)
 
     @staticmethod
+    @retry(
+            wait=wait_random_exponential(multiplier=.250, max=12),
+            stop=stop_after_attempt(15),
+            retry=retry_if_exception_type(HTTPError),
+            reraise=True
+    )
     def __fetch_chapter(index: int, title: str, href: str) -> NovelChapter:
         response = get(f'{RoyalRoadWebNovel.__BASE_URL}{href}')
         response.raise_for_status()
